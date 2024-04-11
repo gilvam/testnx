@@ -18,7 +18,9 @@
               }
             ]
           }
-        ]
+        ],
+        "@angular-eslint/template/accessibility-valid-aria": "error",
+        "@angular-eslint/template/variable": "error"
       }
     },
     {

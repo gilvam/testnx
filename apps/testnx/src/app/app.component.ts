@@ -11,4 +11,11 @@ import { NxWelcomeComponent } from './nx-welcome.component';
 })
 export class AppComponent {
   title = 'testnx';
+
+  testAny(): any{
+    console.log(`return any`);
+  }
+  testNoReturn(){
+    console.log(`return void`);
+  }
 }
