@@ -30,7 +30,8 @@
     {
       "files": ["*.html"],
       "extends": ["plugin:@nx/angular-template"],
-      "rules": {}
+      "rules": {
+      }
     }
   ]
 }
