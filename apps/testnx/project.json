@@ -1,26 +1,23 @@
 {
-  "name": "test-first",
+  "name": "testnx",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "prefix": "app",
-  "sourceRoot": "apps/test-first/src",
+  "sourceRoot": "apps/testnx/src",
   "tags": [],
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/test-first",
-        "index": "apps/test-first/src/index.html",
-        "main": "apps/test-first/src/main.ts",
+        "outputPath": "dist/apps/testnx",
+        "index": "apps/testnx/src/index.html",
+        "main": "apps/testnx/src/main.ts",
         "polyfills": ["zone.js"],
-        "tsConfig": "apps/test-first/tsconfig.app.json",
+        "tsConfig": "apps/testnx/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": [
-          "apps/test-first/src/favicon.ico",
-          "apps/test-first/src/assets"
-        ],
-        "styles": ["apps/test-first/src/styles.scss"],
+        "assets": ["apps/testnx/src/favicon.ico", "apps/testnx/src/assets"],
+        "styles": ["apps/testnx/src/styles.scss"],
         "scripts": []
       },
       "configurations": {
@@ -54,10 +51,10 @@
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {
         "production": {
-          "buildTarget": "test-first:build:production"
+          "buildTarget": "testnx:build:production"
         },
         "development": {
-          "buildTarget": "test-first:build:development"
+          "buildTarget": "testnx:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -65,7 +62,7 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "buildTarget": "test-first:build"
+        "buildTarget": "testnx:build"
       }
     },
     "lint": {
@@ -75,15 +72,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/test-first/jest.config.ts"
-      }
-    },
-    "serve-static": {
-      "executor": "@nx/web:file-server",
-      "options": {
-        "buildTarget": "test-first:build",
-        "port": 4200,
-        "spa": true
+        "jestConfig": "apps/testnx/jest.config.ts"
       }
     }
   }

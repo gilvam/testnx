@@ -432,7 +432,7 @@ import { CommonModule } from '@angular/common';
         <div id="welcome">
           <h1>
             <span> Hello there, </span>
-            Welcome test-first 👋
+            Welcome testnx 👋
           </h1>
         </div>
         <!--  HERO  -->
@@ -836,7 +836,7 @@ nx g &#64;nx/angular:component ui/src/lib/button</pre>
               </svg>
               View project details
             </summary>
-            <pre>nx show project test-first --web</pre>
+            <pre>nx show project testnx --web</pre>
           </details>
           <details>
             <summary>
