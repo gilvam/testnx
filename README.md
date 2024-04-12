@@ -63,8 +63,8 @@ It will show tasks that you can run with Nx.
 
 "camelcase": ["error", { "allow": ["/^[_\\S].*$/"] }],
 
-^(?:[A-Z][A-Z_]*|_[a-z][a-zA-Z_]*)$
--
-^[_\S].*$
--
-^(?!.*__)[A-Z][A-Za-z]*(_[A-Z][A-Za-z]*)*$|_[a-z][A-Za-z]*$
+"@typescript-eslint/indent": ["error", 4],
+        "@typescript-eslint/naming-convention": ["error", {
+            "selector": "variable",
+            "format": ["camelCase", "UPPER_CASE"]
+        }],
