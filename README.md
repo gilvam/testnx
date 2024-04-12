@@ -62,3 +62,7 @@ It will show tasks that you can run with Nx.
 - [Follow us on Twitter](https://twitter.com/nxdevtools)
 
 "camelcase": ["error", { "allow": ["/^[_\\S].*$/"] }],
+
+^(?:[A-Z][A-Z_]*|_[a-z][a-zA-Z_]*)$
+^[_\S].*$
+^(?!.*__)[A-Z][A-Za-z]*(_[A-Z][A-Za-z]*)*$|_[a-z][A-Za-z]*$
