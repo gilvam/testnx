@@ -61,16 +61,9 @@ It will show tasks that you can run with Nx.
 - [Subscribe to the Nx Youtube Channel](https://www.youtube.com/@nxdevtools)
 - [Follow us on Twitter](https://twitter.com/nxdevtools)
 
-"camelcase": ["error", { "allow": ["/^[_\\S].*$/"] }],
+```javascript
 
-"@typescript-eslint/indent": ["error", 4],
-        "@typescript-eslint/naming-convention": ["error", {
-            "selector": "variable",
-            "format": ["camelCase", "UPPER_CASE"]
-        }],
-
-
-        import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { Component, DebugElement, ElementRef, Renderer2 } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { SegmentControlSelectedDirective } from './segment-control-selected.directive';
@@ -144,4 +137,6 @@ describe('SegmentControlSelectedDirective', () => {
 
 	});
 });
+
+``
 
