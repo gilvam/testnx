@@ -68,3 +68,80 @@ It will show tasks that you can run with Nx.
             "selector": "variable",
             "format": ["camelCase", "UPPER_CASE"]
         }],
+
+
+        import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { Component, DebugElement, ElementRef, Renderer2 } from '@angular/core';
+import { By } from '@angular/platform-browser';
+import { SegmentControlSelectedDirective } from './segment-control-selected.directive';
+
+@Component({
+	template: `
+	<div [value]="'week'" appSegmentControlSelected>
+		<button value="week"></button>
+		<button value="month" class="checked"></button>
+	</div>
+	`,
+})
+class TestComponent {
+	isChecked = false;
+}
+
+describe('SegmentControlSelectedDirective', () => {
+	let fixture: ComponentFixture<TestComponent>;
+	let directive: SegmentControlSelectedDirective;
+	let weekButton: DebugElement;
+	let monthButton: DebugElement;
+
+	beforeEach(() => {
+		TestBed.configureTestingModule({
+			declarations: [TestComponent, SegmentControlSelectedDirective],
+			providers: [
+				SegmentControlSelectedDirective,
+				Renderer2,
+				{ provide: ElementRef, useValue: { nativeElement: document.createElement('div') } },
+			]
+		});
+
+		fixture = TestBed.createComponent(TestComponent);
+		directive = TestBed.inject(SegmentControlSelectedDirective);
+		weekButton = fixture.debugElement.query(By.css('button[value="week"]'));
+		monthButton = fixture.debugElement.query(By.css('button[value="month"]'));
+		fixture.detectChanges();
+	});
+
+	it('should add "checked" class to the last button with value="month" after a short delay', (done) => {
+		directive.childrenName = 'button';
+		fixture.detectChanges();
+
+
+		// Initial setup
+		expect(weekButton.nativeElement.classList.contains('checked')).toBeFalsy();
+		expect(monthButton.nativeElement.classList.contains('checked')).toBeTruthy();
+
+		const segmentElement = fixture.debugElement.query(By.directive(SegmentControlSelectedDirective));
+		const segmentDirective = segmentElement.injector.get(SegmentControlSelectedDirective);
+		// segmentDirective.value = 'week';
+		segmentDirective.childrenName = 'button';
+		console.log(`segmentDirective.value: `, segmentDirective.value);
+
+		// console.log(`segmentDirective.value: `, segmentDirective.value);
+		// segmentDirective.ngAfterViewInit();
+		// fixture.detectChanges();
+
+		// Wait for a short delay
+		// tick(100);,
+
+		directive.ngAfterViewInit();
+		fixture.detectChanges();
+
+		// monthButton need to be checked
+		expect(weekButton.nativeElement.classList.contains('checked')).toBeTruthy();
+		done();
+
+
+
+
+	});
+});
+
