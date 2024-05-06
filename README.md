@@ -131,11 +131,68 @@ describe('SegmentControlSelectedDirective', () => {
 		// monthButton need to be checked
 		expect(weekButton.nativeElement.classList.contains('checked')).toBeTruthy();
 		done();
-
-
-
-
 	});
+});
+
+
+
+
+
+
+
+describe('SegmentControlSelectedDirective', () => {
+  let fixture: ComponentFixture<TestComponent>;
+  let directive: SegmentControlSelectedDirective;
+  let weekButton: DebugElement;
+  let monthButton: DebugElement;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [TestComponent, SegmentControlSelectedDirective],
+      providers: [
+        Renderer2,
+        { provide: ElementRef, useValue: { nativeElement: document.createElement('div') } }
+      ]
+    });
+
+    fixture = TestBed.createComponent(TestComponent);
+    fixture.detectChanges();
+
+    directive = fixture.debugElement.query(By.directive(SegmentControlSelectedDirective)).injector.get(SegmentControlSelectedDirective);
+    directive.childrenName = 'button';
+
+    spyOn(directive, 'start').and.callThrough();
+    spyOn(directive, 'stop').and.callThrough();
+
+    weekButton = fixture.debugElement.query(By.css('button[value="week"]'));
+    monthButton = fixture.debugElement.query(By.css('button[value="month"]'));
+  });
+
+  it('should call start() function when initialized', () => {
+    expect(directive.start).toHaveBeenCalled();
+  });
+
+  it('should call stop() function when destroyed', () => {
+    fixture.destroy();
+    expect(directive.stop).toHaveBeenCalled();
+  });
+
+  it('should remove "checked" class from other button when parent value changes', fakeAsync(() => {
+    // Initial setup
+    expect(weekButton.nativeElement.classList.contains('checked')).toBeTruthy();
+    expect(monthButton.nativeElement.classList.contains('checked')).toBeFalsy();
+
+    // Simulate change in parent value
+    fixture.componentInstance.parentValue = 'month';
+    fixture.detectChanges();
+
+    // Wait for changes to be processed
+    tick(200);
+
+    // Assertion after change
+    expect(weekButton.nativeElement.classList.contains('checked')).toBeFalsy();
+    expect(monthButton.nativeElement.classList.contains('checked')).toBeTruthy();
+  }));
 });
 
 ``
