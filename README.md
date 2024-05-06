@@ -358,5 +358,59 @@ describe('SegmentControlSelectedDirective', () => {
   });
 });
 
+
+
+
+
+
+import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
+import { Component, DebugElement, ElementRef, Renderer2 } from '@angular/core';
+import { By } from '@angular/platform-browser';
+import { SegmentControlSelectedDirective } from './segment-control-selected.directive';
+
+@Component({
+	template: `
+	<div [value]="'week'" appSegmentControlSelected>
+		<button value="week"></button>
+		<button value="month" class="checked"></button>
+	</div>
+	`,
+})
+class TestComponent {
+	isChecked = false;
+}
+
+describe('SegmentControlSelectedDirective', () => {
+	let fixture: ComponentFixture<TestComponent>;
+	let directiveEl: DebugElement;
+
+	beforeEach(() => {
+		TestBed.configureTestingModule({
+			declarations: [TestComponent, SegmentControlSelectedDirective],
+		});
+		fixture = TestBed.createComponent(TestComponent);
+		directiveEl = fixture.debugElement.query(By.directive(SegmentControlSelectedDirective));
+	});
+
+	it('should add the "checked" class to the correct button', () => {
+		const directiveInstance = directiveEl.injector.get(SegmentControlSelectedDirective);
+		const buttons = directiveEl.nativeElement.querySelectorAll('button');
+
+		console.log(`buttons: `, buttons);
+
+		// Simulate setting the value to 'week'
+		directiveInstance.value = 'week';
+		directiveInstance.ngAfterViewInit();
+
+
+		setTimeout(() => {
+			expect(buttons[0].classList.contains('checked')).toBe(true); // This should be true
+		}, 500)
+	});
+
+	// Add more test cases as needed
+});
+
+
 ``
 
