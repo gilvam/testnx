@@ -308,5 +308,55 @@ describe('SegmentControlSelectedDirective', () => {
   });
 });
 
+
+
+
+
+describe('SegmentControlSelectedDirective', () => {
+  let component: TestComponent;
+  let fixture: ComponentFixture<TestComponent>;
+  let directive: SegmentControlSelectedDirective;
+  let buttons: DebugElement[];
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [TestComponent, SegmentControlSelectedDirective],
+    });
+    fixture = TestBed.createComponent(TestComponent);
+    component = fixture.componentInstance;
+    directive = fixture.debugElement.query(By.directive(SegmentControlSelectedDirective)).injector.get(SegmentControlSelectedDirective);
+    buttons = fixture.debugElement.queryAll(By.css('segmented-c-button'));
+    fixture.detectChanges();
+  });
+
+  it('should create an instance', () => {
+    expect(directive).toBeTruthy();
+  });
+
+  it('should add "checked" class to the button with matching value', () => {
+    directive.value = 'week';
+    directive.ngAfterViewInit();
+    fixture.detectChanges();
+
+    expect(buttons[0].nativeElement.classList.contains('checked')).toBeTruthy();
+    expect(buttons[1].nativeElement.classList.contains('checked')).toBeFalsy();
+  });
+
+  it('should remove "checked" class from all buttons when value does not match', () => {
+    directive.value = 'month';
+    directive.ngAfterViewInit();
+    fixture.detectChanges();
+
+    expect(buttons[0].nativeElement.classList.contains('checked')).toBeFalsy();
+    expect(buttons[1].nativeElement.classList.contains('checked')).toBeTruthy();
+  });
+
+  it('should stop interval on destroy', () => {
+    spyOn(directive, 'stop');
+    directive.ngOnDestroy();
+    expect(directive.stop).toHaveBeenCalled();
+  });
+});
+
 ``
 
