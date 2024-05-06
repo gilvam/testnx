@@ -195,5 +195,47 @@ describe('SegmentControlSelectedDirective', () => {
   }));
 });
 
+
+
+
+
+@Component({
+  template: `
+    <div appSegmentControlSelected>
+      <button value="week"></button>
+      <button value="month"></button>
+    </div>
+  `
+})
+class TestComponent {}
+
+describe('SegmentControlSelectedDirective', () => {
+  let fixture: ComponentFixture<TestComponent>;
+  let directive: SegmentControlSelectedDirective;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [TestComponent, SegmentControlSelectedDirective],
+      providers: [
+        Renderer2,
+        { provide: ElementRef, useValue: { nativeElement: document.createElement('div') } }
+      ]
+    });
+
+    fixture = TestBed.createComponent(TestComponent);
+    directive = TestBed.inject(SegmentControlSelectedDirective);
+    directive.childrenName = 'button';
+    fixture.detectChanges();
+  });
+
+  it('should create the directive', () => {
+    expect(directive).toBeTruthy();
+  });
+
+  it('should set the childrenName property correctly', () => {
+    expect(directive.childrenName).toBe('button');
+  });
+});
+
 ``
 
