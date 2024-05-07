@@ -412,5 +412,30 @@ describe('SegmentControlSelectedDirective', () => {
 });
 
 
+
+
+export class DateUtil {
+    static getWeekBefore(initDay: number, quantityWeeksBefore = 0): DateRange {
+        const week = 7;
+        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+        const currentDate = new Date();
+        const currentDayIndex = currentDate.getDay(); // Obtém o índice do dia atual (0 a 6, sendo 0 = Domingo)
+
+        // Calcula o dia da semana anterior ajustando conforme o parâmetro initDay
+        let targetDayIndex = (currentDayIndex + week - initDay) % week; // Índice do dia alvo na semana anterior
+        let daysToSubtract = (currentDayIndex < initDay) ? week : 0; // Dias a subtrair para ajustar para a semana anterior
+        const initDate = new Date(currentDate);
+        initDate.setDate(currentDate.getDate() - daysToSubtract - targetDayIndex - (quantityWeeksBefore * week));
+
+        // Calcula o dia final da semana anterior
+        const endDate = new Date(initDate);
+        endDate.setDate(initDate.getDate() + week -1);
+
+        return new DateRange(initDate, endDate);
+    }
+}
+
+
 ``
 
