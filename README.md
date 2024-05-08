@@ -437,5 +437,43 @@ export class DateUtil {
 }
 
 
+export class TrimesterUtil {
+    static getTrimesterDates(offset: number = 0): DateRange {
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth() + 1; // Janeiro é 1, fevereiro é 2, etc.
+        const currentYear = currentDate.getFullYear();
+
+        // Determinar o trimestre atual
+        const currentTrimester = Math.floor((currentMonth - 1) / 3) + 1;
+
+        // Ajustar o trimestre com base no deslocamento
+        const targetTrimester = currentTrimester + offset;
+
+        // Calcular o início do trimestre
+        const startMonth = (targetTrimester - 1) * 3 + 1;
+        const startDate = new Date(currentYear, startMonth - 1, 1); // Primeiro dia do mês
+
+        // Calcular o final do trimestre
+        const endMonth = startMonth + 2;
+        const endDate = new Date(currentYear, endMonth - 1, new Date(currentYear, endMonth, 0).getDate()); // Último dia do mês
+
+        return new DateRange(startDate, endDate);
+    }
+}
+
+export class DateRange {
+    init: Date;
+    end: Date;
+
+    constructor(init: Date, end: Date) {
+        this.init = init;
+        this.end = end;
+    }
+}
+
+const val = TrimesterUtil.getTrimesterDates(0);
+console.log('val: ', val);
+
+
 ``
 
