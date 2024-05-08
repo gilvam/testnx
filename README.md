@@ -68,22 +68,22 @@ export class DateUtil {
         const currentDate = fromDate ?? new Date();
         const currentMonth = currentDate.getMonth() + 1; // Janeiro é 1, fevereiro é 2, etc.
         const currentYear = currentDate.getFullYear();
-
+    
         // Determinar o trimestre atual
         const currentTrimester = Math.floor((currentMonth - 1) / 3) + 1;
-
+    
         // Ajustar o trimestre com base no deslocamento
         const targetTrimester = currentTrimester + offset;
-
+    
         // Calcular o início do trimestre
         const startMonth = (targetTrimester - 1) * 3 + 1;
         const startDate = new Date(currentYear, startMonth - 1, 1); // Primeiro dia do mês
-
+    
         // Calcular o final do trimestre
         const endMonth = startMonth + 2;
-        const lastDayOfMonth = new Date(currentYear, endMonth, 0).getDate(); // Último dia do mês
-        const endDate = new Date(currentYear, endMonth - 1, lastDayOfMonth);
-
+        const lastDayOfMonth = new Date(currentYear, endMonth, 0).getDate();
+        const endDate = new Date(currentYear, endMonth - 1, lastDayOfMonth); // Último dia do mês
+    
         return new DateRange(startDate, endDate);
     }
 }
