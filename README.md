@@ -103,5 +103,214 @@ console.log(DateUtil.getTrimestrer(0, new Date(2024, 5)))  // ['2024-04-01', '20
 console.log(DateUtil.getTrimestrer(0, new Date(2024, 6)))  // ['2024-07-01', '2024-09-30'];
 console.log(DateUtil.getTrimestrer(0, new Date(2024, 10))) // ['2024-10-01', '2024-12-31'];
 
+
+
+@Injectable({ providedIn: 'root' })
+export class StoreService {
+	user$ = new BehaviorSubject<UserDto>(new UserDto());
+
+	origin = new StoreAddressList(new BehaviorSubject([]), AddressTypeEnum.ORIGIN);
+	destination = new StoreAddressList(new BehaviorSubject([]), AddressTypeEnum.DESTINATION);
+
+	volumeList$ = new BehaviorSubject<VolumeModel[]>([new VolumeModel()]);
+	cotacao$ = new BehaviorSubject<CotacaoDto>(new CotacaoDto());
+	card$ = new BehaviorSubject<CreditCardModel>(new CreditCardModel());
+
+	formValid$ = new BehaviorSubject<FormValidModel>(new FormValidModel());
+	contractFinalize$ = new BehaviorSubject<ContractFinalizeDto>(new ContractFinalizeDto());
+	coupon$ = new BehaviorSubject<CouponDto>(new CouponDto());
+
+	config: ConfigDto;
+	private blackList = [StorageKeyEnum.COTACAO, StorageKeyEnum.FORM_VALID];
+	private subscribedList: Map<StorageKeyEnum, Subscription> = new Map();
+
+	constructor() {
+		this.initStorage();
+	}
+
+	get isContractFinalize(): boolean {
+		return !!this.contractFinalize$.value?.status;
+	}
+
+	private static async getStorage(key: string): Promise<any> {
+		const storage = localStorage.getItem(key);
+		if (!storage) {
+			return null;
+		}
+		return JSON.parse(storage);
+	}
+
+	private static async setStorage(key: StorageKeyEnum, obj: any) {
+		localStorage.setItem(key, JSON.stringify(obj));
+	}
+
+	private static async clearStorage(): Promise<any> {
+		return localStorage.clear();
+	}
+
+	refreshStorage(): void {
+		// [this.user$, this.origin.list$, this.destination.list$, this.cotacao$, this.card$, this.formValid$, this.coupon$].map(it => {
+		// 	if (it instanceof BehaviorSubject) {
+		// 		it.complete();
+		//
+		// 		if (it.observers.length) {
+		// 			it.unsubscribe();
+		// 		}
+		// 	}
+		// 	return it;
+		// });
+
+		this.initStorage();
+	}
+
+	resetAndInitStorage(): Promise<any> {
+		return StoreService.clearStorage();
+	}
+
+	resetAndInitStorageAndVariables(): void {
+		this.resetAndInitStorage();
+		this.clearValues();
+	}
+
+	setUserLogged(user: UserDto): void {
+		this.user$.next(user);
+	}
+
+	deleteUserLogged(): void {
+		this.user$.next(new UserDto());
+	}
+
+	nextVolume(volume: VolumeModel): void {
+		this.volumeList$.next([...this.volumeList$.value, volume]);
+
+		const formValid = this.formValid$.value;
+		formValid.volumeList.push(false);
+		this.formValid$.next(formValid);
+	}
+
+	editVolume(index: number, volume: VolumeModel): void {
+		this.volumeList$.value[index] = volume;
+		this.volumeList$.next(this.volumeList$.value);
+	}
+
+	editAllVolumes(volumeList: VolumeModel[]): void {
+		this.volumeList$.next(volumeList);
+	}
+
+	cloneVolume(index: number) {
+		const volumeCloned: VolumeModel = { ...this.volumeList$.value[index] };
+		const volumeList = [...this.volumeList$.value];
+		volumeList.splice(index + 1, 0, volumeCloned);
+		this.volumeList$.next(volumeList);
+	}
+
+	deleteVolume(indexList: number | number[]) {
+		const index = Array.isArray(indexList) ? indexList : [indexList];
+		const volumesLast = this.volumeList$.value.filter((item, i) => !index.includes(i));
+		const formValid = this.formValid$.value;
+
+		this.volumeList$.next(volumesLast.length ? volumesLast : [new VolumeModel()]);
+		formValid.volumeList = formValid.volumeList.filter((_, i) => !index.includes(i));
+		this.formValid$.next(formValid);
+	}
+
+	editCard(card: CreditCardModel) {
+		const c = new CreditCardModel(card.nameOwner, card.cardNumber, card.expiration, card.cvv, card.brand, card.iuguId);
+		this.card$.next(c);
+	}
+
+	editformValid(formValid: FormValidModel) {
+		this.formValid$.next(formValid);
+	}
+
+	setFormValidCreditCard(val: boolean): void {
+		const fo = this.formValid$.value;
+		fo.creditCard = val;
+		this.formValid$.next(fo);
+	}
+
+	setFormValidTermsOfUser(val: boolean): void {
+		const fo = this.formValid$.value;
+		fo.termsOfUser = val;
+		this.formValid$.next(fo);
+	}
+
+	setFormValidVolumeList(index: number, val: boolean): void {
+		const formValid = this.formValid$.value;
+		formValid.volumeList[index] = val;
+
+		this.formValid$.next(formValid);
+	}
+
+	setQuotation(quotation: CotacaoDto) {
+		this.cotacao$.next(quotation);
+	}
+
+	deleteQuotation() {
+		this.cotacao$.next(new CotacaoDto());
+	}
+
+	nextCoupon(coupon: CouponDto) {
+		this.coupon$.next(coupon);
+	}
+
+	private clearValues() {
+		this.user$.next(new UserDto());
+
+		this.origin.list$.next([]);
+		this.destination.list$.next([]);
+		this.volumeList$.next([new VolumeModel()]);
+		this.cotacao$.next(new CotacaoDto());
+		this.card$.next(new CreditCardModel());
+
+		this.formValid$.next(new FormValidModel());
+		this.contractFinalize$.next(new ContractFinalizeDto());
+		this.coupon$.next(new CouponDto());
+	}
+
+	private initStorage(): void {
+		/** TODO para melhorar, serian interessante cirar uma instância nova de cada classe quando pegar do localStorage */
+		this.loading(StorageKeyEnum.USER, this.user$);
+		this.loading(StorageKeyEnum.ORIGIN_LIST, this.origin.list$);
+		this.loading(StorageKeyEnum.DESTINATION_LIST, this.destination.list$);
+		this.loading(StorageKeyEnum.COTACAO, this.cotacao$);
+		this.loading(StorageKeyEnum.CARD, this.card$);
+		this.loading(StorageKeyEnum.FORM_VALID, this.formValid$);
+		this.loading(StorageKeyEnum.COUPON, this.coupon$);
+
+		const sub = this.loading(StorageKeyEnum.VOLUME_LIST, this.volumeList$)
+			.pipe(skip(1))
+			.subscribe(it => {
+				const formValid = this.formValid$.value;
+				formValid.volumeList = it.map(_ => false);
+				this.formValid$.next(formValid);
+				sub.unsubscribe();
+			});
+	}
+
+	private loading(key: StorageKeyEnum, behavior: BehaviorSubject<any[] | any>) {
+		StoreService.getStorage(key).then((items: any[] | any | null) => {
+			if (this.blackList.some(item => item === key)) {
+				return behavior.next(behavior.value);
+			}
+			return behavior.next(items ? items : behavior.value);
+		});
+
+		if (!this.subscribedList.has(key)) {
+			const subscription = behavior.subscribe(items => {
+				StoreService.setStorage(key, items).then();
+				if (!ObjectUtil.isEmpty(items) || items.length) {
+					console.log(`%c ----$ ${key}$:`, 'color: #8b48bf', items);
+				}
+			});
+
+			this.subscribedList.set(key, subscription);
+		}
+
+		return behavior;
+	}
+}
+
+
 ``
 
