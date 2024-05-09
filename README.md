@@ -312,5 +312,152 @@ export class StoreService {
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+import { Inject, Injectable } from '@angular/core';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { ObjectUtil } from '../_shared/utils/object.util';
+import { DOCUMENT } from '@angular/common';
+
+export enum HierarchyTypeEnum {
+  ADMIN = 4,
+  TERR = 3,
+  Z = 2,
+  OF = 1,
+  MANA = 0,
+}
+
+export enum StorageKeyEnum {
+  HIERARCHY = '#hierarchy',
+}
+
+export class Hierarchy {
+  id: string;
+  level: HierarchyTypeEnum;
+
+  constructor(id = '', level = HierarchyTypeEnum.MANA) {
+    this.id = id;
+    this.level = level;
+  }
+
+  isEmpty() {
+    return ObjectUtil.isEmpty(this);
+  }
+}
+
+class StoreHierarchyList {
+  list$: BehaviorSubject<Hierarchy[]>;
+
+  constructor(list$: BehaviorSubject<Hierarchy[]>) {
+    this.list$ = list$;
+  }
+
+  add(address: Hierarchy): void {
+    this.list$.next(this.pushUnique(this.list$.value, address));
+  }
+
+  edit(index: number, address: Hierarchy): void {
+    this.list$.value[index] = address;
+    this.list$.next(this.list$.value);
+  }
+
+  get(index: number): Hierarchy | undefined {
+    return this.list$.value.find((it, i) => i === index);
+  }
+
+  getById(id: string): Hierarchy | undefined {
+    return this.list$.value.find(it => it.id === id);
+  }
+
+  getByLevel(level: HierarchyTypeEnum): Hierarchy | undefined {
+    return this.list$.value.find(it => it.level === level);
+  }
+
+  private pushUnique(list: Hierarchy[], hierarchy: Hierarchy): Hierarchy[] {
+    return list?.length ? [...list.filter(item => item.id !== hierarchy.id || item.level !== hierarchy.level), hierarchy] : [hierarchy];
+  }
+}
+
+@Injectable({ providedIn: 'root' })
+export class StoreService {
+  hierarchy = new StoreHierarchyList(new BehaviorSubject<Hierarchy[]>([]));
+
+  private blackList = [];
+  private subscribedList: Map<StorageKeyEnum, Subscription> = new Map();
+  private static storage: Storage;
+
+
+  constructor(@Inject(DOCUMENT) private document: Document) {
+    this.init();
+  }
+
+  get storage(): Storage {
+    return this.document.defaultView?.sessionStorage as Storage;
+  }
+
+  private static async getStorage(key: string): Promise<any> {
+    const values = this.storage.getItem(key);
+    if (!values) {
+      return null;
+    }
+    return JSON.parse(values);
+  }
+
+  private static async setStorage(key: StorageKeyEnum, obj: any) {
+    this.storage.setItem(key, JSON.stringify(obj));
+  }
+
+  private static async clearStorage(): Promise<any> {
+    return this.storage.clear();
+  }
+
+  clear(): void {
+    this.clearStorage().then(() => {
+      this.hierarchy.list$.next([]);
+    });
+  }
+
+  private clearStorage() {
+    return StoreService.clearStorage();
+  }
+
+  private init(): void {
+    this.loading(StorageKeyEnum.HIERARCHY, this.hierarchy.list$);
+  }
+
+  private loading(key: StorageKeyEnum, behavior: BehaviorSubject<any[] | any>) {
+    StoreService.getStorage(key).then((items: any[] | any | null) => {
+      if (this.blackList.some(item => item === key)) {
+        return behavior.next(behavior.value);
+      }
+      return behavior.next(items ? items : behavior.value);
+    });
+
+    if (!this.subscribedList.has(key)) {
+      const subscription = behavior.subscribe(items => {
+        StoreService.setStorage(key, items).then();
+        if (!ObjectUtil.isEmpty(items) || items.length) {
+        }
+        console.log(`%c ----$ ${ key }$:`, 'color: #8b48bf', items);
+      });
+
+      this.subscribedList.set(key, subscription);
+    }
+
+    return behavior;
+  }
+}
+
+
+
 ``
 
