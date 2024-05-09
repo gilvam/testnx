@@ -315,10 +315,72 @@ export class StoreService {
 
 
 
+export class StringUtil<T> {
+  static capitalize(text: string) {
+    return `${ text.charAt(0).toUpperCase() }${ text.slice(1).toLowerCase() }`;
+  }
+
+  static onlyNumber(text: string | number): string {
+    return String(text).match(/\d/gi)?.join('') || '';
+  }
+
+  static snakeToCamel(str: any) {
+    return str.toLowerCase().replace(/([-_][a-z])/g, (group: any) => group.toUpperCase().replace('-', '').replace('_', ''));
+  }
+}
 
 
 
 
+import { StringUtil } from './string.util';
+
+export class ObjectUtil {
+  static isEquals(obj1: any, obj2: any): boolean {
+    return JSON.stringify(obj1) === JSON.stringify(obj2);
+  }
+
+  static isEmpty(obj: any): boolean {
+    if (!obj) {
+      return true;
+    }
+    return !Object.keys(obj).length || !Object.keys(obj).some(key => !!obj[key]);
+  }
+
+  static isObject(obj: any): boolean {
+    return Object.prototype.toString.call(obj) === '[object Object]';
+  }
+
+  static isArrayOfObject(array: any[]): boolean {
+    if (!Array.isArray(array)) {
+      return false;
+    }
+    return array.some(it => ObjectUtil.isObject(it));
+  }
+
+  private static keyMapper([key, val]: [any, any]): [any, any] {
+    const keyCamel = StringUtil.snakeToCamel(key);
+
+    if (ObjectUtil.isObject(val)) {
+      return [keyCamel, ObjectUtil.lowerCaseKey({ obj: val })];
+    } else if (ObjectUtil.isArrayOfObject(val)) {
+      return [keyCamel, val.map((it: any) => ObjectUtil.lowerCaseKey({ obj: it }))];
+    }
+
+    return [keyCamel, val];
+  }
+
+  private static lowerCaseKey({ obj }: { obj: any }) {
+    return Object.entries(obj)
+      .map(ObjectUtil.keyMapper)
+      .reduce((acc: any, [k, v]) => {
+        return (acc[k] = v), acc;
+      }, {});
+  }
+
+  static snakeToCamel(object: any) {
+    return ObjectUtil.lowerCaseKey({ obj: object });
+  }
+}
 
 
 
