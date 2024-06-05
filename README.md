@@ -571,6 +571,19 @@ const ganhoPorcentagem = calcularGanhoPorcentagem(x, y, data);
 console.log(ganhoPorcentagem);
 
 
+function calculateTotalGainOrLoss(data: number[][]): number {
+    const firstMonth = data[0];
+    const lastMonth = data[data.length - 1];
+    
+    // Sum of values for each month
+    const sumFirstMonth = firstMonth.reduce((total, value) => total + value, 0);
+    const sumLastMonth = lastMonth.reduce((total, value) => total + value, 0);
+    
+    // Difference between the total of the last month and the total of the first month
+    const totalGainOrLoss = sumLastMonth - sumFirstMonth;
+    
+    return totalGainOrLoss;
+}
 
 
 ``
