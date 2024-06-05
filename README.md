@@ -551,5 +551,27 @@ class NumberUtil {
 
 
 
+const x = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun'];
+const y = [0, 100, 200, 300];
+const data = [100, 30, 30, 30, 100];
+
+function calcularGanhoPorcentagem(x: string[], y: number[], data: number[]): number[] {
+    const ganhoPorcentagem: number[] = [];
+
+    for (let i = 1; i < x.length; i++) {
+        const ganhoAbsoluto = data[i] - data[i - 1];
+        const ganhoRelativo = (ganhoAbsoluto / y[i - 1]) * 100; // Ganho relativo em relação ao mês anterior
+        ganhoPorcentagem.push(ganhoRelativo);
+    }
+
+    return ganhoPorcentagem;
+}
+
+const ganhoPorcentagem = calcularGanhoPorcentagem(x, y, data);
+console.log(ganhoPorcentagem);
+
+
+
+
 ``
 
