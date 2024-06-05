@@ -520,6 +520,36 @@ export class StoreService {
 }
 
 
+class NumberUtil {
+    static simplifyNumber(input: string | number): string {
+        const num = typeof input === 'string' ? parseFloat(input) : input;
+
+        if (isNaN(num)) {
+            throw new Error('Entrada inválida');
+        }
+
+        if (num === 0) {
+            return '0';
+        }
+
+        const abbreviations = ['', 'K', 'MM', 'B', 'T'];
+        const divisor = 1000;
+
+        const tier = Math.log10(Math.abs(num)) / 3 | 0;
+
+        if (tier === 0) {
+            return num.toFixed(1);
+        }
+
+        const suffix = abbreviations[tier];
+        const scale = Math.pow(divisor, tier);
+        const scaled = num / scale;
+
+        return scaled.toFixed(1) + ' ' + suffix;
+    }
+}
+
+
 
 ``
 
