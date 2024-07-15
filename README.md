@@ -586,5 +586,22 @@ function calculateTotalGainOrLoss(data: number[][]): number {
 }
 
 
+function calc(range: number, offset: number): number[] {
+    if (offset === 0) {
+        return [-range, 0];
+    } 
+    
+    if(offset < 0){
+      const start = -(range * (Math.abs(offset) + 1));
+      const end = -(range * Math.abs(offset));
+      return [start, end];
+    }
+
+    const start = offset * range;
+    const end = (offset + 1) * range;
+    return [start, end];
+}
+
+
 ``
 
