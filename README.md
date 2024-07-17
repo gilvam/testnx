@@ -603,5 +603,37 @@ function calc(range: number, offset: number): number[] {
 }
 
 
+
+function removeCloseValues(arr: number[], percentage: number): number[] {
+    if (arr.length === 0) {
+        return [];
+    }
+
+    // Ordena o array em ordem crescente
+    arr.sort((a, b) => a - b);
+
+    // Inicializa o array de resultados com o primeiro valor
+    let result: number[] = [arr[0]];
+
+    for (let i = 1; i < arr.length; i++) {
+        // Calcula o threshold dinâmico como uma porcentagem do valor atual
+        const threshold = (result[result.length - 1] * percentage) / 100;
+
+        // Se a diferença entre o valor atual e o último valor adicionado no resultado for maior que o threshold
+        if (Math.abs(arr[i] - result[result.length - 1]) > threshold) {
+            // Adiciona o valor atual ao resultado
+            result.push(arr[i]);
+        }
+    }
+
+    return result;
+}
+
+const inputArray = [1500, 1400, 1000, 600, 500, 600, 100, 60, 50, 40, 30, 20, 10, 0];
+const percentage = 100;  // Ajuste a porcentagem conforme necessário
+const resultArray = removeCloseValues(inputArray, percentage);
+console.log(resultArray);  // Exemplo de saída: [0, 50, 100, 500, 1000, 1500]
+
+
 ``
 
